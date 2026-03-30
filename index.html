@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的健身計畫</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #1a1a1a;
+    --gray-dark: #4a4a4a;
+    --gray-mid: #888;
+    --gray-light: #e8e8e8;
+    --gray-bg: #f7f7f5;
+    --white: #ffffff;
+    --accent: #2d6a4f;
+    --accent-light: #e8f4ee;
+    --warn: #c75b39;
+    --warn-light: #fdf0ec;
+    --info: #2b5c8a;
+    --info-light: #eaf1f8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-light);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 2rem;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: var(--black);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .nav-links { display: flex; gap: 1.5rem; list-style: none; margin-left: auto; }
+  .nav-links a {
+    font-size: 13px; color: var(--gray-mid);
+    text-decoration: none; letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--black); }
+
+  /* HERO */
+  .hero {
+    padding: 5rem 2rem 4rem;
+    max-width: 900px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 200px; gap: 3rem; align-items: center;
+  }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.12em; color: var(--gray-mid);
+    text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15; letter-spacing: -0.02em;
+    color: var(--black); margin-bottom: 1rem;
+  }
+  .hero-desc { font-size: 14px; color: var(--gray-dark); line-height: 1.8; }
+  .score-ring {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-light);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+  }
+  .score-ring::before {
+    content: '';
+    position: absolute; inset: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--warn);
+    clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%);
+  }
+  .score-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px; line-height: 1; color: var(--warn);
+  }
+  .score-label { font-size: 11px; color: var(--gray-mid); margin-top: 4px; }
+
+  /* SECTIONS */
+  section { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+  .section-divider { border: none; border-top: 1px solid var(--gray-light); max-width: 900px; margin: 0 auto; }
+  .section-eyebrow {
+    font-size: 11px; letter-spacing: 0.1em; color: var(--gray-mid);
+    text-transform: uppercase; margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem; letter-spacing: -0.02em;
+    color: var(--black); margin-bottom: 2rem;
+  }
+
+  /* INBODY GRID */
+  .inbody-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 2rem; }
+  .inbody-card {
+    background: var(--gray-bg);
+    border-radius: 12px; padding: 1.1rem;
+  }
+  .inbody-label { font-size: 11px; color: var(--gray-mid); margin-bottom: 6px; }
+  .inbody-value { font-size: 22px; font-weight: 700; color: var(--black); }
+  .inbody-unit { font-size: 12px; font-weight: 400; color: var(--gray-mid); }
+  .inbody-range { font-size: 11px; color: var(--gray-mid); margin-top: 4px; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 2px 8px; border-radius: 99px; margin-top: 6px;
+  }
+  .badge-ok { background: var(--accent-light); color: var(--accent); }
+  .badge-warn { background: #fff3e0; color: #e65100; }
+  .badge-danger { background: var(--warn-light); color: var(--warn); }
+
+  /* BAR */
+  .bar-section { margin-bottom: 1.5rem; }
+  .bar-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-mid); margin-bottom: 6px; }
+  .bar-track { height: 6px; background: var(--gray-light); border-radius: 3px; position: relative; overflow: visible; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-ok { background: var(--accent); }
+  .bar-danger { background: var(--warn); }
+  .bar-normal-zone {
+    position: absolute; top: -3px; height: 12px;
+    background: rgba(45,106,79,0.12);
+    border-left: 1.5px solid var(--accent);
+    border-right: 1.5px solid var(--accent);
+    border-radius: 2px;
+  }
+
+  /* KEY STATS ROW */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 2rem; }
+  .stat-card {
+    border: 1px solid var(--gray-light);
+    border-radius: 12px; padding: 1.1rem;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .stat-label { font-size: 11px; color: var(--gray-mid); }
+  .stat-value { font-size: 20px; font-weight: 700; }
+  .stat-sub { font-size: 11px; color: var(--gray-mid); }
+
+  /* WEEK OVERVIEW */
+  .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 2.5rem; }
+  .week-cell {
+    border-radius: 10px; padding: 10px 6px;
+    text-align: center;
+  }
+  .wc-dow { font-size: 11px; color: var(--gray-mid); margin-bottom: 4px; }
+  .wc-type { font-size: 11px; font-weight: 500; }
+  .wc-leg { background: #fff8e1; } .wc-leg .wc-type { color: #e65100; }
+  .wc-upper { background: var(--info-light); } .wc-upper .wc-type { color: var(--info); }
+  .wc-full { background: var(--accent-light); } .wc-full .wc-type { color: var(--accent); }
+  .wc-rest { background: var(--gray-bg); } .wc-rest .wc-type { color: var(--gray-mid); }
+
+  /* DAY CARDS */
+  .day-card {
+    border: 1px solid var(--gray-light);
+    border-radius: 14px; padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .day-head { display: flex; align-items: center; gap: 10px; margin-bottom: 1.2rem; }
+  .day-tag {
+    font-size: 11px; font-weight: 500; padding: 3px 10px;
+    border-radius: 99px; letter-spacing: 0.02em;
+  }
+  .tag-leg { background: #fff3e0; color: #e65100; }
+  .tag-upper { background: var(--info-light); color: var(--info); }
+  .tag-full { background: var(--accent-light); color: var(--accent); }
+  .day-title { font-size: 15px; font-weight: 700; }
+  .day-dur { font-size: 12px; color: var(--gray-mid); margin-left: auto; }
+
+  .exercise-row {
+    display: flex; align-items: flex-start;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-bg);
+    gap: 1rem;
+  }
+  .exercise-row:last-child { border-bottom: none; }
+  .ex-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--gray-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .ex-body { flex: 1; }
+  .ex-name { font-size: 13px; font-weight: 500; color: var(--black); }
+  .ex-note { font-size: 12px; color: var(--gray-mid); margin-top: 2px; line-height: 1.5; }
+  .ex-machine { font-size: 11px; color: var(--gray-mid); background: var(--gray-bg); display: inline-block; padding: 1px 7px; border-radius: 4px; margin-top: 4px; }
+  .ex-sets { font-size: 12px; color: var(--gray-dark); white-space: nowrap; font-weight: 500; margin-top: 4px; }
+
+  /* DIET */
+  .diet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .diet-card {
+    background: var(--gray-bg); border-radius: 14px; padding: 1.4rem;
+  }
+  .diet-card-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--black); }
+  .diet-item { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px solid #e4e4e4; font-size: 13px; }
+  .diet-item:last-child { border-bottom: none; }
+  .diet-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 6px; }
+  .diet-dot-warn { background: var(--warn); }
+  .diet-text { color: var(--gray-dark); line-height: 1.5; }
+  .protein-bar-wrap { margin-top: 1.2rem; }
+  .protein-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-mid); margin-bottom: 6px; }
+  .protein-bar { height: 8px; background: var(--gray-light); border-radius: 4px; overflow: hidden; }
+  .protein-fill { height: 100%; width: 68%; background: var(--accent); border-radius: 4px; }
+
+  /* FOOD EXAMPLES */
+  .food-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 1rem; }
+  .food-item {
+    background: var(--white); border: 1px solid var(--gray-light);
+    border-radius: 10px; padding: 10px;
+    text-align: center; font-size: 12px; color: var(--gray-dark);
+  }
+  .food-emoji { font-size: 22px; display: block; margin-bottom: 4px; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--gray-light);
+    padding: 2rem; text-align: center;
+    font-size: 12px; color: var(--gray-mid);
+  }
+
+  /* ANIMATIONS */
+  .fade-in {
+    opacity: 0; transform: translateY(16px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+
+  @media (max-width: 680px) {
+    .hero { grid-template-columns: 1fr; }
+    .score-ring { display: none; }
+    .inbody-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .diet-grid { grid-template-columns: 1fr; }
+    .food-grid { grid-template-columns: repeat(2, 1fr); }
+    .week-grid { grid-template-columns: repeat(4, 1fr); }
+    nav { padding: 0 1rem; }
+    .nav-links { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">初心 體能</div>
+  <ul class="nav-links">
+    <li><a href="#inbody">數據</a></li>
+    <li><a href="#schedule">課表</a></li>
+    <li><a href="#exercises">動作</a></li>
+    <li><a href="#diet">飲食</a></li>
+    <li><a href="#recipes">食譜</a></li>
+    <li><a href="#ai-analyzer">AI 分析</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-eyebrow">InBody 270 · 2026.03.29 · 女性 · 23歲 · 164cm</div>
+    <h1 class="fade-in">我的<br>健身計畫</h1>
+    <p class="hero-desc fade-in delay-1">器械式訓練 × 爬坡有氧<br>每週三天，從零開始的減脂增肌計畫。</p>
+  </div>
+  <div class="fade-in delay-2" style="display:flex;justify-content:center;">
+    <div class="score-ring">
+      <div class="score-num">68</div>
+      <div class="score-label">InBody 評分 /100</div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- INBODY -->
+<section id="inbody">
+  <div class="section-eyebrow">InBody 數據摘要</div>
+  <div class="section-title">身體組成分析</div>
+
+  <div class="inbody-grid">
+    <div class="inbody-card">
+      <div class="inbody-label">體重</div>
+      <div class="inbody-value">66.9 <span class="inbody-unit">kg</span></div>
+      <div class="inbody-range">正常：48～65 kg</div>
+      <span class="badge badge-warn">偏高</span>
+    </div>
+    <div class="inbody-card">
+      <div class="inbody-label">體脂率</div>
+      <div class="inbody-value">35.9 <span class="inbody-unit">%</span></div>
+      <div class="inbody-range">正常：18～28%</div>
+      <span class="badge badge-danger">過高</span>
+    </div>
+    <div class="inbody-card">
+      <div class="inbody-label">骨骼肌重</div>
+      <div class="inbody-value">23.3 <span class="inbody-unit">kg</span></div>
+      <div class="inbody-range">正常範圍內</div>
+      <span class="badge badge-ok">正常</span>
+    </div>
+    <div class="inbody-card">
+      <div class="inbody-label">內臟脂肪等級</div>
+      <div class="inbody-value">11</div>
+      <div class="inbody-range">正常：＜10</div>
+      <span class="badge badge-danger">偏高</span>
+    </div>
+  </div>
+
+  <div class="bar-section">
+    <div class="bar-meta"><span>體重 66.9 kg</span><span>正常 48～65 kg</span></div>
+    <div class="bar-track">
+      <div class="bar-normal-zone" style="left:23.4%;width:8.3%"></div>
+      <div class="bar-fill bar-danger" style="width:32.6%"></div>
+    </div>
+  </div>
+  <div class="bar-section">
+    <div class="bar-meta"><span>體脂率 35.9%</span><span>正常 18～28%</span></div>
+    <div class="bar-track">
+      <div class="bar-normal-zone" style="left:31%;width:17.2%"></div>
+      <div class="bar-fill bar-danger" style="width:65%"></div>
+    </div>
+  </div>
+  <div class="bar-section">
+    <div class="bar-meta"><span>骨骼肌重 23.3 kg</span><span>正常範圍</span></div>
+    <div class="bar-track">
+      <div class="bar-normal-zone" style="left:41%;width:18%"></div>
+      <div class="bar-fill bar-ok" style="width:49%"></div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">BMI</div>
+      <div class="stat-value" style="color:#e65100">24.9</div>
+      <div class="stat-sub">邊緣正常（正常 18.5～25）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">腰臀比</div>
+      <div class="stat-value" style="color:var(--warn)">0.87</div>
+      <div class="stat-sub">偏高（正常 0.75～0.85）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">基礎代謝率</div>
+      <div class="stat-value" style="color:#e65100">1296 <span style="font-size:14px;font-weight:400;color:var(--gray-mid)">kcal</span></div>
+      <div class="stat-sub">略低（正常 1371～1594）</div>
+    </div>
+  </div>
+
+  <div style="background:var(--warn-light);border-left:3px solid var(--warn);border-radius:0 10px 10px 0;padding:1rem 1.2rem;margin-top:1.5rem;font-size:13px;color:var(--gray-dark);line-height:1.8;">
+    <strong style="color:var(--warn)">重點解讀：</strong>體重與 BMI 看起來接近正常，但體脂率 35.9% 遠超標準——典型的「隱性肥胖」。腹部脂肪達 221.2%，是目前最需要改善的區域。好消息是四肢肌肉量皆正常，是良好的訓練基礎。
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- SCHEDULE -->
+<section id="schedule">
+  <div class="section-eyebrow">每週課表</div>
+  <div class="section-title">一週三練計畫</div>
+
+  <div class="week-grid">
+    <div class="week-cell wc-leg"><div class="wc-dow">週一</div><div class="wc-type">腿＋核心</div></div>
+    <div class="week-cell wc-rest"><div class="wc-dow">週二</div><div class="wc-type">休息</div></div>
+    <div class="week-cell wc-upper"><div class="wc-dow">週三</div><div class="wc-type">上半身</div></div>
+    <div class="week-cell wc-rest"><div class="wc-dow">週四</div><div class="wc-type">休息</div></div>
+    <div class="week-cell wc-full"><div class="wc-dow">週五</div><div class="wc-type">全身＋爬坡</div></div>
+    <div class="week-cell wc-rest"><div class="wc-dow">週六</div><div class="wc-type">休息</div></div>
+    <div class="week-cell wc-rest"><div class="wc-dow">週日</div><div class="wc-type">休息</div></div>
+  </div>
+
+  <!-- Day 1 -->
+  <div class="day-card">
+    <div class="day-head">
+      <span class="day-tag tag-leg">週一</span>
+      <span class="day-title">腿部 + 核心</span>
+      <span class="day-dur">約 50 分鐘</span>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">🦵</div>
+      <div class="ex-body">
+        <div class="ex-name">腿推機</div>
+        <div class="ex-note">腳踩踏板與肩同寬，膝蓋推出不鎖死</div>
+        <span class="ex-machine">Leg Press Machine</span>
+      </div>
+      <div class="ex-sets">3 × 12</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">↗</div>
+      <div class="ex-body">
+        <div class="ex-name">坐姿腿伸展機</div>
+        <div class="ex-note">訓練大腿前側，動作要慢，不要甩動</div>
+        <span class="ex-machine">Leg Extension</span>
+      </div>
+      <div class="ex-sets">3 × 12</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">↙</div>
+      <div class="ex-body">
+        <div class="ex-name">坐姿腿彎舉機</div>
+        <div class="ex-note">訓練大腿後側，與腿伸展搭配成一對</div>
+        <span class="ex-machine">Leg Curl</span>
+      </div>
+      <div class="ex-sets">3 × 12</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">↔</div>
+      <div class="ex-body">
+        <div class="ex-name">臀部外展機</div>
+        <div class="ex-note">訓練臀中肌，對體型線條影響很大</div>
+        <span class="ex-machine">Hip Abduction</span>
+      </div>
+      <div class="ex-sets">3 × 15</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">⬛</div>
+      <div class="ex-body">
+        <div class="ex-name">棒式 Plank</div>
+        <div class="ex-note">撐手肘版本，核心夾緊，腰不下沉，不憋氣</div>
+        <span class="ex-machine">徒手 · 地板</span>
+      </div>
+      <div class="ex-sets">3 × 30 秒</div>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="day-card">
+    <div class="day-head">
+      <span class="day-tag tag-upper">週三</span>
+      <span class="day-title">上半身（推 + 拉）</span>
+      <span class="day-dur">約 45 分鐘</span>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">💪</div>
+      <div class="ex-body">
+        <div class="ex-name">坐姿胸推機</div>
+        <div class="ex-note">推出去吐氣，回來不要完全放鬆，感受胸肌用力</div>
+        <span class="ex-machine">Chest Press Machine</span>
+      </div>
+      <div class="ex-sets">3 × 12</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">⬇</div>
+      <div class="ex-body">
+        <div class="ex-name">滑輪下拉機</div>
+        <div class="ex-note">把橫桿拉到鎖骨，靠背部力量而非手臂</div>
+        <span class="ex-machine">Lat Pulldown</span>
+      </div>
+      <div class="ex-sets">3 × 12</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">↩</div>
+      <div class="ex-body">
+        <div class="ex-name">坐姿划船機</div>
+        <div class="ex-note">把手拉到腹部，感受兩側背部夾緊</div>
+        <span class="ex-machine">Seated Row Machine</span>
+      </div>
+      <div class="ex-sets">3 × 12</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">⬆</div>
+      <div class="ex-body">
+        <div class="ex-name">坐姿肩推機</div>
+        <div class="ex-note">從耳旁推到頭頂，不要聳肩</div>
+        <span class="ex-machine">Shoulder Press Machine</span>
+      </div>
+      <div class="ex-sets">3 × 10</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">🦋</div>
+      <div class="ex-body">
+        <div class="ex-name">蝴蝶機夾胸</div>
+        <div class="ex-note">手臂微彎，夾到中間感受胸肌收縮</div>
+        <span class="ex-machine">Pec Deck / Fly Machine</span>
+      </div>
+      <div class="ex-sets">2 × 12</div>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="day-card">
+    <div class="day-head">
+      <span class="day-tag tag-full">週五</span>
+      <span class="day-title">全身循環 + 爬坡有氧</span>
+      <span class="day-dur">約 60 分鐘</span>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">🦵</div>
+      <div class="ex-body">
+        <div class="ex-name">腿推機（輕重量）</div>
+        <div class="ex-note">比週一輕約 20%，做全身暖身用</div>
+        <span class="ex-machine">Leg Press Machine</span>
+      </div>
+      <div class="ex-sets">2 × 15</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">⬇</div>
+      <div class="ex-body">
+        <div class="ex-name">滑輪下拉機</div>
+        <div class="ex-note">維持週三重量與動作品質</div>
+        <span class="ex-machine">Lat Pulldown</span>
+      </div>
+      <div class="ex-sets">2 × 12</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">💪</div>
+      <div class="ex-body">
+        <div class="ex-name">坐姿胸推機</div>
+        <div class="ex-note">維持週三重量</div>
+        <span class="ex-machine">Chest Press Machine</span>
+      </div>
+      <div class="ex-sets">2 × 12</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">↔</div>
+      <div class="ex-body">
+        <div class="ex-name">臀部外展機</div>
+        <div class="ex-note">補足週一腿日量</div>
+        <span class="ex-machine">Hip Abduction</span>
+      </div>
+      <div class="ex-sets">2 × 15</div>
+    </div>
+    <div class="exercise-row">
+      <div class="ex-icon">🏔</div>
+      <div class="ex-body">
+        <div class="ex-name">爬坡有氧</div>
+        <div class="ex-note">重訓後接，坡度 8～12%，中等速度，維持能說話的強度</div>
+        <span class="ex-machine">跑步機爬坡 / 戶外爬坡</span>
+      </div>
+      <div class="ex-sets">30 分鐘</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- EXERCISES -->
+<section id="exercises">
+  <div class="section-eyebrow">動作說明</div>
+  <div class="section-title">如何找到適合的重量</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:2rem;">
+    <div style="background:var(--gray-bg);border-radius:12px;padding:1.2rem;">
+      <div style="font-size:22px;margin-bottom:8px;">1</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;">從最輕開始</div>
+      <div style="font-size:12px;color:var(--gray-mid);line-height:1.6;">調到機器最低重量，先做 12 下感受動作方向與節奏。</div>
+    </div>
+    <div style="background:var(--gray-bg);border-radius:12px;padding:1.2rem;">
+      <div style="font-size:22px;margin-bottom:8px;">2</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;">找到「有點吃力」的重量</div>
+      <div style="font-size:12px;color:var(--gray-mid);line-height:1.6;">最後 2～3 下感覺吃力但動作不跑掉，就是本週重量。</div>
+    </div>
+    <div style="background:var(--gray-bg);border-radius:12px;padding:1.2rem;">
+      <div style="font-size:22px;margin-bottom:8px;">3</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;">每兩週進步一格</div>
+      <div style="font-size:12px;color:var(--gray-mid);line-height:1.6;">不需要急著加重，穩定進步比受傷後中斷更重要。</div>
+    </div>
+  </div>
+
+  <div style="background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:1rem 1.2rem;font-size:13px;color:var(--gray-dark);line-height:1.8;">
+    <strong style="color:var(--accent)">新手提醒：</strong>不確定動作姿勢時，請現場教練示範一次。每台機器通常有座椅高度調整和圖示說明，第一次使用先花 2 分鐘讀一下。<br>
+    <strong style="color:var(--accent)">組間休息：</strong>重訓動作之間休息 60～90 秒即可，不需要太長。
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- DIET -->
+<section id="diet">
+  <div class="section-eyebrow">飲食建議</div>
+  <div class="section-title">吃對比少吃更重要</div>
+
+  <div class="diet-grid">
+    <div class="diet-card">
+      <div class="diet-card-title">每日目標</div>
+      <div class="diet-item"><div class="diet-dot"></div><div class="diet-text">總熱量約 <strong>1730 kcal</strong>（報告建議值）</div></div>
+      <div class="diet-item"><div class="diet-dot"></div><div class="diet-text">蛋白質目標 <strong>約 100g</strong>（體重 × 1.5）</div></div>
+      <div class="diet-item"><div class="diet-dot"></div><div class="diet-text">減少精緻糖、含糖飲料</div></div>
+      <div class="diet-item"><div class="diet-dot"></div><div class="diet-text">每日水分至少 <strong>2000 ml</strong></div></div>
+      <div class="protein-bar-wrap">
+        <div class="protein-label"><span>蛋白質進度（以 100g 為目標）</span><span>68%</span></div>
+        <div class="protein-bar"><div class="protein-fill"></div></div>
+        <div style="font-size:11px;color:var(--gray-mid);margin-top:4px;">範例：雞胸 150g ≈ 35g 蛋白質</div>
+      </div>
+    </div>
+
+    <div class="diet-card">
+      <div class="diet-card-title">需要注意的事</div>
+      <div class="diet-item"><div class="diet-dot diet-dot-warn"></div><div class="diet-text">不要吃太少——低於 1300 kcal 會掉肌肉，讓代謝更低</div></div>
+      <div class="diet-item"><div class="diet-dot diet-dot-warn"></div><div class="diet-text">訓練後 30～60 分鐘補充蛋白質效果最好</div></div>
+      <div class="diet-item"><div class="diet-dot diet-dot-warn"></div><div class="diet-text">減少精緻澱粉（白飯改糙米、麵包減量）</div></div>
+      <div class="diet-item"><div class="diet-dot diet-dot-warn"></div><div class="diet-text">外食選擇：避免油炸，多選蒸煮滷燙</div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:1.5rem;">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--black)">優質蛋白質來源</div>
+    <div class="food-grid">
+      <div class="food-item"><span class="food-emoji">🍗</span>雞胸肉<br><span style="color:var(--gray-mid)">35g / 150g</span></div>
+      <div class="food-item"><span class="food-emoji">🥚</span>雞蛋<br><span style="color:var(--gray-mid)">6g / 顆</span></div>
+      <div class="food-item"><span class="food-emoji">🫘</span>無糖豆漿<br><span style="color:var(--gray-mid)">7g / 250ml</span></div>
+      <div class="food-item"><span class="food-emoji">🧊</span>希臘優格<br><span style="color:var(--gray-mid)">10g / 100g</span></div>
+      <div class="food-item"><span class="food-emoji">🐟</span>鮪魚罐頭<br><span style="color:var(--gray-mid)">25g / 罐</span></div>
+      <div class="food-item"><span class="food-emoji">🍜</span>豆腐<br><span style="color:var(--gray-mid)">8g / 100g</span></div>
+      <div class="food-item"><span class="food-emoji">🥛</span>低脂牛奶<br><span style="color:var(--gray-mid)">8g / 240ml</span></div>
+      <div class="food-item"><span class="food-emoji">🍤</span>蝦仁<br><span style="color:var(--gray-mid)">18g / 100g</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- RECIPES -->
+<section id="recipes">
+  <div class="section-eyebrow">個人食譜</div>
+  <div class="section-title">10 分鐘快手料理</div>
+  <p style="font-size:13px;color:var(--gray-mid);margin-bottom:1.5rem;">填入這週備好的食材，AI 幫你生成專屬食譜，每道都在 10 分鐘內完成。</p>
+
+  <!-- Ingredient Input Area -->
+  <div style="background:var(--gray-bg);border-radius:14px;padding:1.4rem;margin-bottom:1.2rem;">
+    <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:10px;">這週的食材</div>
+
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;color:var(--gray-mid);margin-bottom:6px;">蛋白質來源</div>
+      <div id="protein-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="protein-input" placeholder="例：雞里肌、板豆腐、蛋…" style="flex:1;font-size:13px;padding:8px 12px;border:1px solid var(--gray-light);border-radius:8px;font-family:inherit;background:var(--white);color:var(--black);" onkeydown="if(event.key==='Enter')addIngredient('protein')">
+        <button onclick="addIngredient('protein')" style="padding:8px 14px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;">新增</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;color:var(--gray-mid);margin-bottom:6px;">蔬菜</div>
+      <div id="veggie-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="veggie-input" placeholder="例：高麗菜、青椒、番茄…" style="flex:1;font-size:13px;padding:8px 12px;border:1px solid var(--gray-light);border-radius:8px;font-family:inherit;background:var(--white);color:var(--black);" onkeydown="if(event.key==='Enter')addIngredient('veggie')">
+        <button onclick="addIngredient('veggie')" style="padding:8px 14px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;">新增</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--gray-mid);margin-bottom:6px;">調味料</div>
+      <div id="sauce-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="sauce-input" placeholder="例：壽喜燒醬、咖哩塊、胡麻醬…" style="flex:1;font-size:13px;padding:8px 12px;border:1px solid var(--gray-light);border-radius:8px;font-family:inherit;background:var(--white);color:var(--black);" onkeydown="if(event.key==='Enter')addIngredient('sauce')">
+        <button onclick="addIngredient('sauce')" style="padding:8px 14px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;">新增</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div style="font-size:12px;color:var(--gray-mid);">想要幾道食譜？</div>
+      <select id="recipe-count" style="padding:6px 10px;border:1px solid var(--gray-light);border-radius:8px;font-size:13px;font-family:inherit;background:var(--white);color:var(--black);">
+        <option value="3">3 道</option>
+        <option value="5">5 道</option>
+        <option value="7">7 道</option>
+      </select>
+      <button onclick="generateRecipes()" id="recipe-btn" style="margin-left:auto;padding:10px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">AI 生成食譜</button>
+    </div>
+  </div>
+
+  <!-- Quick fill defaults -->
+  <div style="font-size:12px;color:var(--gray-mid);margin-bottom:1.5rem;">
+    <span style="margin-right:6px;">快速填入上週食材：</span>
+    <button onclick="fillDefaults()" style="font-size:12px;padding:4px 10px;border:1px solid var(--gray-light);border-radius:6px;background:var(--white);color:var(--gray-dark);cursor:pointer;font-family:inherit;">雞里肌、板豆腐、蛋、高麗菜、青江菜、櫛瓜、青椒、玉米、番茄</button>
+  </div>
+
+  <!-- Recipe Loading -->
+  <div id="recipe-loading" style="display:none;text-align:center;padding:2rem;color:var(--gray-mid);font-size:13px;">
+    <div style="font-size:24px;margin-bottom:8px;">👩‍🍳</div>
+    AI 正在幫你設計食譜...
+  </div>
+
+  <!-- Recipe Results -->
+  <div id="recipe-results"></div>
+</section>
+
+<style>
+.ing-tag {
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--white);border:1px solid var(--gray-light);
+  border-radius:99px;padding:3px 10px;font-size:12px;color:var(--gray-dark);
+}
+.ing-tag button {
+  background:none;border:none;cursor:pointer;color:var(--gray-mid);
+  font-size:14px;line-height:1;padding:0;margin:0;
+}
+.recipe-card {
+  border:1px solid var(--gray-light);border-radius:14px;
+  overflow:hidden;margin-bottom:12px;
+}
+.recipe-card-header {
+  padding:1rem 1.2rem;
+}
+.recipe-card-body {
+  padding:1rem 1.2rem;
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+}
+.recipe-tip {
+  margin-top:10px;font-size:11px;padding:6px 10px;border-radius:6px;
+  grid-column:1/-1;
+}
+@media(max-width:680px){
+  .recipe-card-body{grid-template-columns:1fr;}
+}
+</style>
+
+<script>
+const ingredients = { protein: [], veggie: [], sauce: [] };
+const colors = {
+  protein: { bg:'var(--accent-light)', color:'var(--accent)' },
+  veggie:  { bg:'var(--info-light)',   color:'var(--info)'   },
+  sauce:   { bg:'var(--warn-light)',   color:'var(--warn)'   }
+};
+
+function addIngredient(type) {
+  const input = document.getElementById(type + '-input');
+  const val = input.value.trim();
+  if (!val) return;
+  // support comma-separated
+  val.split(/[,，、]/).forEach(v => {
+    const t = v.trim();
+    if (t && !ingredients[type].includes(t)) {
+      ingredients[type].push(t);
+    }
+  });
+  input.value = '';
+  renderTags(type);
+}
+
+function removeIngredient(type, item) {
+  ingredients[type] = ingredients[type].filter(i => i !== item);
+  renderTags(type);
+}
+
+function renderTags(type) {
+  const c = colors[type];
+  document.getElementById(type + '-tags').innerHTML = ingredients[type].map(item =>
+    `<span class="ing-tag" style="background:${c.bg};border-color:${c.bg};">
+      <span style="color:${c.color}">${item}</span>
+      <button onclick="removeIngredient('${type}','${item}')" style="color:${c.color}">×</button>
+    </span>`
+  ).join('');
+}
+
+function fillDefaults() {
+  ingredients.protein = ['雞里肌','板豆腐','蛋'];
+  ingredients.veggie  = ['高麗菜','青江菜','櫛瓜','青椒','玉米','番茄'];
+  ingredients.sauce   = ['壽喜燒醬','咖哩塊','胡麻醬','黑胡椒鹽','薄鹽醬油','鰹魚粉'];
+  ['protein','veggie','sauce'].forEach(renderTags);
+}
+
+const headerColors = [
+  { bg:'var(--accent-light)', accent:'var(--accent)', label:'早餐 / 便當' },
+  { bg:'var(--warn-light)',   accent:'var(--warn)',   label:'午餐推薦'   },
+  { bg:'var(--info-light)',   accent:'var(--info)',   label:'晚餐推薦'   },
+  { bg:'#f3eeff',             accent:'#6b4fa0',       label:'週末變化'   },
+  { bg:'#fff8e1',             accent:'#e65100',       label:'備餐首選'   },
+  { bg:'#e0f7fa',             accent:'#00796b',       label:'輕食選擇'   },
+  { bg:'#fce4ec',             accent:'#c2185b',       label:'高蛋白'     },
+];
+
+async function generateRecipes() {
+  const all = [...ingredients.protein, ...ingredients.veggie, ...ingredients.sauce];
+  if (all.length === 0) { alert('請先填入食材！'); return; }
+
+  const count = document.getElementById('recipe-count').value;
+  document.getElementById('recipe-loading').style.display = 'block';
+  document.getElementById('recipe-results').innerHTML = '';
+  document.getElementById('recipe-btn').disabled = true;
+
+  const prompt = `你是一位專業營養師兼廚師。以下是使用者這週備好的食材：
+蛋白質：${ingredients.protein.join('、') || '無'}
+蔬菜：${ingredients.veggie.join('、') || '無'}
+調味料：${ingredients.sauce.join('、') || '無'}
+
+請根據這些食材，設計 ${count} 道不同的料理，每道料理必須在 10 分鐘內完成，適合減脂增肌（使用者：女性23歲，目標熱量1730kcal，蛋白質100g/天）。
+
+請用以下 JSON 格式回答，只回傳 JSON，不要任何其他文字：
+[
+  {
+    "name": "料理名稱",
+    "meal": "早餐/午餐/晚餐/便當",
+    "kcal": 數字,
+    "protein": 數字,
+    "ingredients": "食材清單一行",
+    "steps": ["步驟1", "步驟2", "步驟3"],
+    "tip": "一句小提醒"
+  }
+]`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const recipes = JSON.parse(clean);
+    renderRecipes(recipes);
+  } catch(e) {
+    document.getElementById('recipe-results').innerHTML =
+      '<div style="background:var(--warn-light);border-radius:10px;padding:1rem;font-size:13px;color:var(--warn);">生成失敗，請再試一次。</div>';
+  }
+
+  document.getElementById('recipe-loading').style.display = 'none';
+  document.getElementById('recipe-btn').disabled = false;
+}
+
+function renderRecipes(recipes) {
+  const container = document.getElementById('recipe-results');
+  container.innerHTML = recipes.map((r, i) => {
+    const c = headerColors[i % headerColors.length];
+    const steps = r.steps.map((s, j) => `${j+1}. ${s}`).join('<br>');
+    return `
+    <div class="recipe-card">
+      <div class="recipe-card-header" style="background:${c.bg}">
+        <div style="font-size:11px;font-weight:500;color:${c.accent};margin-bottom:4px;">${r.meal}</div>
+        <div style="font-size:15px;font-weight:700;color:var(--black);">${r.name}</div>
+        <div style="font-size:12px;color:var(--gray-mid);margin-top:2px;">約 ${r.kcal} kcal · 蛋白質 ${r.protein}g</div>
+      </div>
+      <div class="recipe-card-body">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--black);margin-bottom:6px;">食材</div>
+          <div style="font-size:12px;color:var(--gray-dark);line-height:1.8;">${r.ingredients}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--black);margin-bottom:6px;">步驟</div>
+          <div style="font-size:12px;color:var(--gray-dark);line-height:1.9;">${steps}</div>
+        </div>
+        <div class="recipe-tip" style="background:${c.bg};color:${c.accent};">${r.tip}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+
+<hr class="section-divider">
+
+<!-- AI ANALYZER -->
+<section id="ai-analyzer">
+  <div class="section-eyebrow">AI 飲食分析</div>
+  <div class="section-title">上傳三餐，AI 幫你評估</div>
+  <p style="font-size:13px;color:var(--gray-mid);margin-bottom:1.5rem;">上傳餐點照片，AI 會自動估算熱量、蛋白質，並依照你的 InBody 數據給出個人化建議。</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:1.5rem;">
+    <div class="upload-zone" id="zone-breakfast" onclick="document.getElementById('upload-breakfast').click()">
+      <input type="file" id="upload-breakfast" accept="image/*" style="display:none" onchange="handleUpload(this,'breakfast','早餐')">
+      <div class="upload-icon">☀</div>
+      <div class="upload-label">早餐</div>
+      <div class="upload-hint">點擊上傳圖片</div>
+      <img id="preview-breakfast" style="display:none;width:100%;border-radius:8px;margin-top:8px;object-fit:cover;max-height:120px;">
+    </div>
+    <div class="upload-zone" id="zone-lunch" onclick="document.getElementById('upload-lunch').click()">
+      <input type="file" id="upload-lunch" accept="image/*" style="display:none" onchange="handleUpload(this,'lunch','午餐')">
+      <div class="upload-icon">☁</div>
+      <div class="upload-label">午餐</div>
+      <div class="upload-hint">點擊上傳圖片</div>
+      <img id="preview-lunch" style="display:none;width:100%;border-radius:8px;margin-top:8px;object-fit:cover;max-height:120px;">
+    </div>
+    <div class="upload-zone" id="zone-dinner" onclick="document.getElementById('upload-dinner').click()">
+      <input type="file" id="upload-dinner" accept="image/*" style="display:none" onchange="handleUpload(this,'dinner','晚餐')">
+      <div class="upload-icon">🌙</div>
+      <div class="upload-label">晚餐</div>
+      <div class="upload-hint">點擊上傳圖片</div>
+      <img id="preview-dinner" style="display:none;width:100%;border-radius:8px;margin-top:8px;object-fit:cover;max-height:120px;">
+    </div>
+  </div>
+
+  <button id="analyze-btn" onclick="analyzeAll()" style="width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;" disabled>
+    開始 AI 分析
+  </button>
+
+  <div id="loading" style="display:none;text-align:center;padding:2rem;color:var(--gray-mid);font-size:13px;">
+    <div style="font-size:24px;margin-bottom:8px;">⏳</div>
+    AI 正在分析你的餐點...
+  </div>
+
+  <div id="result-area" style="display:none;margin-top:1.5rem;">
+    <div id="result-content"></div>
+  </div>
+</section>
+
+<style>
+.upload-zone {
+  border: 1.5px dashed var(--gray-light);
+  border-radius: 12px;
+  padding: 1.2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  min-height: 120px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+}
+.upload-zone:hover { border-color: var(--accent); background: var(--accent-light); }
+.upload-zone.has-image { border-color: var(--accent); border-style: solid; }
+.upload-icon { font-size: 22px; }
+.upload-label { font-size: 13px; font-weight: 700; color: var(--black); }
+.upload-hint { font-size: 11px; color: var(--gray-mid); }
+.result-card { background: var(--gray-bg); border-radius: 12px; padding: 1.2rem; margin-bottom: 12px; }
+.result-meal { font-size: 13px; font-weight: 700; color: var(--black); margin-bottom: 8px; }
+.result-text { font-size: 13px; color: var(--gray-dark); line-height: 1.8; }
+.result-summary { background: var(--accent-light); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 1rem 1.2rem; margin-top: 12px; font-size: 13px; color: var(--gray-dark); line-height: 1.8; }
+@media(max-width:680px){
+  #recipes > div, #ai-analyzer > div:first-of-type { grid-template-columns: 1fr !important; }
+}
+</style>
+
+<script>
+const uploads = { breakfast: null, lunch: null, dinner: null };
+
+function handleUpload(input, meal, label) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    uploads[meal] = e.target.result;
+    const preview = document.getElementById('preview-' + meal);
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById('zone-' + meal.replace('breakfast','breakfast').replace('lunch','lunch').replace('dinner','dinner')).classList.add('has-image');
+    document.querySelector('#zone-' + meal + ' .upload-hint').textContent = '點擊重新上傳';
+    checkReady();
+  };
+  reader.readAsDataURL(file);
+}
+
+function checkReady() {
+  const ready = Object.values(uploads).some(v => v !== null);
+  document.getElementById('analyze-btn').disabled = !ready;
+}
+
+async function analyzeAll() {
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('result-area').style.display = 'none';
+
+  const messages = [];
+  const contentParts = [];
+
+  contentParts.push({
+    type: 'text',
+    text: `你是一位專業營養師。以下是一位女性（23歲，164cm，體重66.9kg，體脂率35.9%，每日目標熱量1730kcal，蛋白質目標100g）的餐點照片。請分析每一餐的食物內容，估算熱量與蛋白質，然後給出今日總結與個人化建議。請用繁體中文回答，格式如下：
+【早餐/午餐/晚餐】（有上傳的才分析）
+- 食物：列出看到的食物
+- 估計熱量：X kcal
+- 估計蛋白質：Xg
+- 評估：一句話評語
+
+【今日總結】
+- 總熱量：X kcal（目標1730）
+- 總蛋白質：Xg（目標100g）
+- 整體評語：2~3句
+
+【個人化建議】
+根據今日飲食，給出明天的飲食調整建議，並推薦一道適合她備餐食材（雞里肌、蛋、高麗菜、青江菜、櫛瓜、青椒、玉米、番茄、調味料：黑胡椒、胡椒鹽、壽喜燒醬、咖哩塊、薄鹽醬油、胡麻醬）的料理。`
+  });
+
+  const mealLabels = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' };
+  let hasAny = false;
+  for (const [meal, data] of Object.entries(uploads)) {
+    if (data) {
+      hasAny = true;
+      const base64 = data.split(',')[1];
+      const mediaType = data.split(';')[0].split(':')[1];
+      contentParts.push({ type: 'text', text: `以下是${mealLabels[meal]}的照片：` });
+      contentParts.push({ type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } });
+    }
+  }
+
+  if (!hasAny) return;
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: contentParts }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '分析失敗，請重試。';
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('result-area').style.display = 'block';
+    document.getElementById('result-content').innerHTML = formatResult(text);
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('result-area').style.display = 'block';
+    document.getElementById('result-content').innerHTML = '<div class="result-card"><div class="result-text">分析時發生錯誤，請重試。</div></div>';
+  }
+
+  btn.disabled = false;
+}
+
+function formatResult(text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  let html = '';
+  let inSummary = false;
+
+  for (const line of lines) {
+    if (line.startsWith('【') && line.includes('總結')) {
+      html += `<div class="result-summary"><strong style="color:var(--accent)">${line}</strong><br>`;
+      inSummary = true;
+    } else if (line.startsWith('【') && line.includes('建議')) {
+      if (inSummary) { html += '</div>'; inSummary = false; }
+      html += `<div class="result-summary" style="background:var(--info-light);border-color:var(--info);margin-top:10px;"><strong style="color:var(--info)">${line}</strong><br>`;
+      inSummary = true;
+    } else if (line.startsWith('【')) {
+      if (inSummary) { html += '</div>'; inSummary = false; }
+      html += `<div class="result-card"><div class="result-meal">${line}</div><div class="result-text">`;
+    } else if (line.startsWith('-')) {
+      html += line + '<br>';
+    } else {
+      html += line + '<br>';
+    }
+  }
+  if (inSummary) html += '</div>';
+  else html += '</div></div>';
+  return html;
+}
+</script>
+
+<footer>
+  初心體能 · InBody 270 · 2026.03.29 · 23歲 · 僅供個人參考，請依實際狀況調整
+</footer>
+
+</body>
+</html>
