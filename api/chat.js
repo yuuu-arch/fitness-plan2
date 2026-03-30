@@ -8,18 +8,13 @@ module.exports = async function handler(req, res) {
   }
 
   const key = process.env.ANTHROPIC_API_KEY;
-  
+
   if (!key) {
-    return res.status(500).json({ error: 'API key is missing', key: 'undefined' });
+    return res.status(500).json({ error: 'API key is missing' });
   }
 
-  return res.status(200).json({ 
-    keyExists: true, 
+  return res.status(200).json({
+    keyExists: true,
     keyPrefix: key.substring(0, 10) + '...'
   });
 }
-```
-
-Commit 後等 Vercel 部署完，然後直接在瀏覽器網址列輸入：
-```
-https://fitness-plan2.vercel.app/api/chat
