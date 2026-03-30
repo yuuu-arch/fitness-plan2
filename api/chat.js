@@ -7,14 +7,12 @@ module.exports = async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const key = process.env.ANTHROPIC_API_KEY;
-
-  if (!key) {
-    return res.status(500).json({ error: 'API key is missing' });
-  }
-
-  return res.status(200).json({
-    keyExists: true,
-    keyPrefix: key.substring(0, 10) + '...'
+  const key = process.env.ANTHROPIC_API_KEY || 'NOT_FOUND';
+  
+  return res.status(200).json({ 
+    key_status: key === 'NOT_FOUND' ? 'missing' : 'found',
+    key_length: key.length,
+    node_env: process.env.NODE_ENV,
+    all_env_keys: Object.keys(process.env).filter(k => k.includes('ANTHRO'))
   });
 }
